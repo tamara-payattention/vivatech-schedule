@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VivaTech 2026 · Расписание встреч</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --ink:#0a0e1a; --ink-2:#141b30;
+    --paper:#f3f1ea; --paper-2:#e9e6db;
+    --blue:#0454ff; --blue-deep:#0033b0;
+    --line:#c9c4b4; --line-soft:#dcd8cb;
+    --muted:#6a6657; --muted-2:#928d7c;
+    --hot:#ff4d2e; --good:#0b8a4f; --gold:#b8862a;
+    --card:#fbfaf6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;line-height:1.45}
+
+  .masthead{border-bottom:2px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:60}
+  .masthead-inner{max-width:1320px;margin:0 auto;padding:14px 28px;display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap}
+  .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:19px;letter-spacing:-.02em;display:flex;align-items:center;gap:11px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px rgba(4,84,255,.18)}
+  .brand .sep{color:var(--line);font-weight:400;margin:0 2px}
+  .brand .sub{color:var(--muted);font-weight:450;font-size:13px}
+  .clock{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);letter-spacing:.02em;text-align:right}
+  .clock b{color:var(--ink);font-weight:700}
+
+  .hero{max-width:1320px;margin:0 auto;padding:42px 28px 26px;border-bottom:1px solid var(--line)}
+  .hero-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:end}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:30px;height:2px;background:var(--blue)}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(34px,5vw,60px);line-height:.95;letter-spacing:-.035em;margin-bottom:16px}
+  h1 em{font-style:normal;color:var(--blue)}
+  .lede{font-size:16px;color:var(--ink-2);max-width:54ch;line-height:1.5}
+  .lede b{font-weight:600}
+  .hero-stats{display:flex;gap:0;border:1.5px solid var(--ink)}
+  .hstat{flex:1;padding:14px 16px;border-right:1px solid var(--line)}
+  .hstat:last-child{border-right:none}
+  .hstat .n{font-family:'Space Grotesk';font-weight:700;font-size:30px;line-height:1;letter-spacing:-.02em}
+  .hstat .l{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px;line-height:1.3}
+  .hstat.b .n{color:var(--blue)}
+  .hstat.g .n{color:var(--good)}
+
+  .controls{max-width:1320px;margin:0 auto;padding:20px 28px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;position:sticky;top:51px;background:var(--paper);z-index:50;border-bottom:1px solid var(--line-soft)}
+  .search{flex:1;min-width:220px;position:relative}
+  .search input{width:100%;padding:11px 14px 11px 38px;border:1.5px solid var(--ink);background:var(--card);font-family:'Inter';font-size:14px;color:var(--ink);outline:none;transition:box-shadow .15s}
+  .search input:focus{box-shadow:3px 3px 0 var(--blue)}
+  .search input::placeholder{color:var(--muted-2)}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--muted);fill:none;stroke-width:2}
+  .filters{display:flex;gap:7px;flex-wrap:wrap}
+  .chip{font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.03em;padding:8px 13px;border:1.5px solid var(--line);background:transparent;cursor:pointer;color:var(--muted);transition:all .14s;white-space:nowrap;display:flex;align-items:center;gap:7px;font-weight:500}
+  .chip .cnt{font-size:10px;opacity:.7}
+  .chip:hover{border-color:var(--ink);color:var(--ink)}
+  .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .chip.on .cnt{opacity:.65}
+  .chip[data-f="investor"].on{background:var(--blue);border-color:var(--blue)}
+  .chip[data-f="partner"].on{background:var(--good);border-color:var(--good)}
+  .chip[data-f="service"].on{background:var(--gold);border-color:var(--gold)}
+
+  .wrap{max-width:1320px;margin:0 auto;padding:14px 28px 70px}
+  .count-line{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);letter-spacing:.05em;margin:16px 0 8px;text-transform:uppercase}
+  .count-line b{color:var(--ink)}
+
+  .day{margin-top:34px}
+  .day-head{display:flex;align-items:baseline;gap:16px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:20px;flex-wrap:wrap}
+  .day-num{font-family:'JetBrains Mono';font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--blue);text-transform:uppercase}
+  .day-name{font-family:'Space Grotesk';font-weight:700;font-size:27px;letter-spacing:-.025em}
+  .day-date{font-family:'JetBrains Mono';font-size:12px;color:var(--muted);letter-spacing:.03em}
+  .day-cnt{font-family:'JetBrains Mono';font-size:11px;color:var(--muted-2);letter-spacing:.05em;margin-left:auto}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+
+  .card{background:var(--card);border:1.5px solid var(--line);display:flex;flex-direction:column;transition:border-color .15s, transform .15s, box-shadow .15s;position:relative}
+  .card:hover{border-color:var(--ink);transform:translateY(-2px);box-shadow:5px 6px 0 rgba(10,14,26,.09)}
+  .card.hide{display:none}
+  .time-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--ink);color:var(--paper);gap:10px}
+  .time{font-family:'JetBrains Mono';font-weight:700;font-size:14px;letter-spacing:.04em;display:flex;align-items:center;gap:7px}
+  .time svg{width:12px;height:12px;stroke:var(--paper);fill:none;stroke-width:1.8;opacity:.8}
+  .status{font-family:'JetBrains Mono';font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:20px;display:flex;align-items:center;gap:5px}
+  .status.ok{background:rgba(11,138,79,.22);color:#7ff0b0}
+  .status.wait{background:rgba(255,180,40,.2);color:#ffd27a}
+  .status .sd{width:5px;height:5px;border-radius:50%}
+  .status.ok .sd{background:#43e08a}
+  .status.wait .sd{background:#ffbf48}
+
+  .meet-bar{display:flex;align-items:center;gap:9px;padding:8px 14px;background:#eaf0ff;border-bottom:1px solid var(--line-soft);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.03em;color:var(--blue-deep)}
+  .meet-bar svg{width:13px;height:13px;stroke:var(--blue);fill:none;stroke-width:1.8;flex-shrink:0}
+  .meet-bar .zone{color:var(--muted)}
+  .meet-bar b{font-weight:700;color:var(--blue-deep);letter-spacing:.04em;white-space:nowrap}
+
+  .card-top{padding:15px 16px 12px;border-bottom:1px solid var(--line-soft);display:flex;gap:12px;align-items:flex-start}
+  .avatar{width:44px;height:44px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:16px;color:#fff;letter-spacing:-.02em}
+  .nm h3{font-family:'Space Grotesk';font-weight:600;font-size:16px;letter-spacing:-.015em;line-height:1.05;margin-bottom:3px}
+  .nm .role{font-size:12px;color:var(--muted);line-height:1.3}
+  .card-body{padding:13px 16px 14px;flex:1;display:flex;flex-direction:column;gap:11px}
+  .org-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .org-name{font-family:'Space Grotesk';font-weight:600;font-size:13px}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.07em;text-transform:uppercase;padding:3px 7px;font-weight:700;white-space:nowrap}
+  .tag.investor{background:rgba(4,84,255,.12);color:var(--blue-deep)}
+  .tag.partner{background:rgba(11,138,79,.13);color:var(--good)}
+  .tag.service{background:rgba(184,134,42,.15);color:#8a6418}
+  .org-desc{font-size:12px;color:var(--ink-2);line-height:1.42}
+  .facts{display:grid;gap:6px}
+  .fact{display:grid;grid-template-columns:76px 1fr;gap:9px;font-size:11.5px;align-items:baseline}
+  .fact dt{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted-2);padding-top:1px}
+  .fact dd{color:var(--ink-2);line-height:1.35}
+  .fact dd b{font-weight:600;color:var(--ink)}
+  .card-foot{margin-top:auto;padding:10px 16px;border-top:1px solid var(--line-soft);display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--paper-2)}
+  .loc{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.03em;display:flex;align-items:center;gap:5px}
+  .loc svg{width:11px;height:11px;stroke:var(--muted);fill:none;stroke-width:1.6}
+  .langs{display:flex;gap:4px}
+  .lang{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.05em;padding:2px 5px;border:1px solid var(--line);color:var(--muted);text-transform:uppercase}
+  .flag-note{font-size:10.5px;color:var(--hot);line-height:1.35;display:flex;gap:6px;align-items:flex-start;border-left:2px solid var(--hot);padding:5px 0 5px 9px;background:rgba(255,77,46,.05)}
+  .flag-note svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;stroke:var(--hot);fill:none;stroke-width:2}
+
+  .day.hide{display:none}
+
+  footer{max-width:1320px;margin:0 auto;padding:26px 28px 50px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted);line-height:1.6}
+  footer .leg{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:12px}
+  footer .leg span{display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.03em}
+  footer .leg i{width:11px;height:11px;display:inline-block}
+  footer p{max-width:92ch}
+
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:24px}
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .controls{top:0;position:static}.masthead{position:static}
+  }
+  @media(max-width:600px){
+    .grid{grid-template-columns:1fr}
+    .hero{padding:30px 20px 22px}.wrap{padding:10px 20px 50px}
+    .masthead-inner,.controls,.hero,footer{padding-left:20px;padding-right:20px}
+  }
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand"><span class="dot"></span>PayAttention<span class="sep">/</span><span class="sub">VivaTech 2026 · расписание встреч</span></div>
+    <div class="clock"><b>17–19 ИЮН 2026</b> · ПАРИЖ · PORTE DE VERSAILLES</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow">Программа встреч · 18 контактов</div>
+      <h1>График<br>встреч <em>·</em></h1>
+      <p class="lede">Все запланированные встречи на VivaTech по дням и времени. Каждая карточка — человек, фирма, инвестиционный/деловой фокус, бэкграунд, локация, языки и статус встречи. <b>Без оценок и ранжирования</b> — только фактура.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat b"><div class="n">18</div><div class="l">встреч<br>всего</div></div>
+      <div class="hstat g"><div class="n">7</div><div class="l">подтверждено</div></div>
+      <div class="hstat"><div class="n">11</div><div class="l">ожидают<br>ответа</div></div>
+      <div class="hstat"><div class="n">3</div><div class="l">дня</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="controls">
+  <div class="search">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+    <input id="q" type="text" placeholder="Поиск по имени, фирме, стране, фокусу…" autocomplete="off">
+  </div>
+  <div class="filters" id="filters">
+    <button class="chip on" data-f="all">Все <span class="cnt">18</span></button>
+    <button class="chip" data-f="investor">Инвесторы <span class="cnt">10</span></button>
+    <button class="chip" data-f="partner">Партнёры <span class="cnt">5</span></button>
+    <button class="chip" data-f="service">Сервис <span class="cnt">3</span></button>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="count-line">Показано <b id="shown">18</b> из 18</div>
+  <div id="days"></div>
+</main>
+
+<footer>
+  <div class="leg">
+    <span><i style="background:#0454ff"></i> Инвестор / фонд</span>
+    <span><i style="background:#0b8a4f"></i> Партнёр / коннектор</span>
+    <span><i style="background:#b8862a"></i> Сервис / прочее</span>
+    <span style="color:#0b8a4f"><i style="background:#43e08a"></i> Встреча подтверждена</span>
+    <span style="color:#b8862a"><i style="background:#ffbf48"></i> Запрос ожидает ответа</span>
+    <span style="color:#ff4d2e"><i style="background:#ff4d2e"></i> Уточнить лично</span>
+  </div>
+  <p>Данные из открытых источников (LinkedIn, сайты компаний, реестры, Crunchbase, отраслевые базы) для подготовки к встречам. Часть персональных профилей в открытом доступе разрежена — отмечены флагом «уточнить лично». Должности — по списку встреч и публичным профилям. Цифры по фондам/AUM могут устаревать — проверять перед предметным разговором. Статус встреч — по данным приложения VivaTech на момент подготовки.</p>
+</footer>
+
+<script>
+const PEOPLE = [
+  { day:"wed", time:"13:30", status:"wait",
+    first:"João", last:"Castro", initials:"JC", color:"#0454ff",
+    role:"Investment & Portfolio Manager", org:"Buenavista Equity Partners", type:"investor",
+    orgDesc:"Независимый управляющий активами (с 1996), ~€1 млрд под управлением (PE / VC / инфра). VC-рука Buenavista Ventures — Seed/Post-Seed/Series A, упор на патентованный tech и прорывные модели.",
+    facts:{"Фокус":"Финтех, фудтех, healthtech, legaltech","Финтех-портфель":"Feedzai (единорог), Payflow","Стадия":"Seed / Post-Seed / Series A","Гео":"Иберия (+ US / Лат. Америка)","Бэкграунд":"Ранее BiG — корпфинанс, M&A, digital payments; NOVA SBE"},
+    loc:"Лиссабон, Португалия", langs:["PT","EN","ES"], flag:null },
+
+  { day:"wed", time:"14:30", status:"ok",
+    first:"Uveesheksingh", last:"Purmah", initials:"UP", color:"#b8862a",
+    role:"Chief Executive Officer", org:"Venture Corporate Services (Mauritius)", type:"service",
+    orgDesc:"Маленькая (~4 чел.) лицензированная FSC management-company (с 2009): инкорпорация, администрирование, корп. секретариат, бухгалтерия, налоги, трасты / фонды. Аффилирована с Venture Law Ltd.",
+    facts:{"Профиль":"Корп. услуги; маврикийские структуры / холдинги","Клиенты":"IFI, DFI, фонд-менеджеры, HNWI","Офис":"Ebène / Cybercity, Маврикий"},
+    loc:"Маврикий", langs:["EN","FR"], table:{zone:"Business Plaza",num:"21"}, flag:"Публичного следа по персоне почти нет; фамилия встречается у разных людей — подтвердить личность." },
+
+  { day:"wed", time:"16:00", status:"wait",
+    first:"Viktoria", last:"Oushatova", initials:"VO", color:"#0454ff",
+    role:"VC Investor", org:"Nationale-Nederlanden (NN Ventures)", type:"investor",
+    orgDesc:"CVC / венчур-билдер крупного голландского страховщика NN Group. Запускает несколько новых венчуров в год (до Seed). Мандат: пенсии + embedded insurance.",
+    facts:{"Фокус":"Финтех / иншуртех; embedded insurance, пенсии","Стадия":"До Seed; строят венчуры сами","Доп. роль":"Со-фаундер Contrivance Ventures — ангелы pre-seed/seed по ЦВЕ (с 2019)","Бэкграунд":"~5 лет equity-аналитик в Лондоне; LBS + INSEAD"},
+    loc:"Амстердам · связи с ЦВЕ", langs:["EN","BG"], flag:null },
+
+  { day:"thu", time:"10:30", status:"ok",
+    first:"Jean-Louis", last:"Murphy", initials:"JM", color:"#0454ff",
+    role:"Head of Ventures & VC Relations", org:"Finance Montréal", type:"investor",
+    orgDesc:"Кластерная организация финсектора Квебека. Ведёт финтех-акселерацию (Fintech Delta) и консультирует финтех-стартапы. Не фонд — экосистемный хаб.",
+    facts:{"Фокус":"Финтех-акселерация, валидация стартапов","Бэкграунд":"Продукт/SRE в крипто-бирже Newton, McFarlane Toys, ChainVine, IBM","Профиль":"Необычно технический для кластерной роли","Спикер":"Canada Fintech Forum"},
+    loc:"Монреаль, Канада", langs:["FR","EN"], table:{zone:"Business Plaza",num:"7"}, flag:null },
+
+  { day:"thu", time:"11:00", status:"ok",
+    first:"Javier", last:"Roca García", initials:"JR", color:"#0454ff",
+    role:"VC Investor · Dealflow / Scouting", org:"Bankinter VC", type:"investor",
+    orgDesc:"Венчурное подразделение испанского банка Bankinter (совместно с Fundación Innovación Bankinter). С 2013 года — 40+ стартапов.",
+    facts:{"Фокус":"Финтех, иншуртех, цифровые активы / крипта","Стадия":"Ранняя; скаутинг и dealflow","Гео":"Испания","Бэкграунд":"Universidad Carlos III; связь с акселератором Lanzadera"},
+    loc:"Мадрид, Испания", langs:["ES","EN"], table:{zone:"Investor meeting area",num:null}, flag:null },
+
+  { day:"thu", time:"11:30", status:"ok",
+    first:"Pepijn", last:"van den Berg", initials:"PB", color:"#0454ff",
+    role:"Investment Manager / Associate", org:"Airbridge Equity Partners", type:"investor",
+    orgDesc:"Амстердамский VC (основан 2017). Фонд AEP-II закрыт на €63M. Инвестирует в масштабируемый европейский tech, B2B и B2C.",
+    facts:{"Тикет":"€1–5M (начальный)","Порог":"Компании от €50k выручки в месяц","Стадия":"Series A/B и growth","Портфель":"We Are Eves, Join Marketing, Wonderkind, Rinkel, passbolt, Apideck, delphai (exit→Intapp)","Бэкграунд":"С 2022; ранее PE (Maeander, Nedvest); TU Delft"},
+    loc:"Амстердам, Нидерланды", langs:["NL","EN"], flag:null },
+
+  { day:"thu", time:"13:00", status:"ok",
+    first:"Vasyl", last:"Kuchma", initials:"VK", color:"#b8862a",
+    role:"CEO & Co-Founder", org:"SDH IT GmbH", type:"service",
+    orgDesc:"IT-аутсорс / разработка (Software Development Hub, с 2014). Команды в Украине, Германии, США/Канаде. Full-cycle разработка, инжиниринг, DevOps, ML/AI. Сильный трек в healthtech / EHR.",
+    facts:{"Профиль":"Dev shop — партнёр по разработке / масштабированию","Опыт":"20+ лет; серийный фаундер; Kharkiv State Economics University","Спикер":"GovTech / digital-health (Smart Country Convention Berlin)"},
+    loc:"Гамбург, Германия (Украина)", langs:["UK","RU","EN","DE"], table:{zone:"Business Plaza",num:"37"}, flag:null },
+
+  { day:"thu", time:"13:30", status:"wait",
+    first:"Aaron", last:"Maini", initials:"AM", color:"#b8862a",
+    role:"Senior Business Development Manager", org:"PitchBook (Morningstar)", type:"service",
+    orgDesc:"PitchBook — платформа данных по частному капиталу (PE/VC/M&A), часть Morningstar. Не инвестор: помогает стартапам с фандрейзингом через данные, таргетинг инвесторов и отраслевую аналитику.",
+    facts:{"Профиль":"BD / startup-relations; данные, не капитал","Карьера":"Рост внутри PitchBook: Customer Success → CS Manager → Senior BD Manager","Контент":"Регулярно постит отчёты PitchBook (retail fintech, BNPL, EU VC)","Чем полезен":"Доступ к данным, таргетинг инвесторов под раунд"},
+    loc:"Лондон, Великобритания", langs:["EN"], flag:"Сам написал: «PitchBook не инвесторы, но помогаем стартапам с раундами». Разговор о данных/нетворке, не о чеке." },
+
+  { day:"thu", time:"15:00", status:"wait",
+    first:"Danny Sangyong", last:"Han", initials:"DH", color:"#0b8a4f",
+    role:"Managing Director / CEO", org:"on&up partners", type:"partner",
+    orgDesc:"Корейская open-innovation / GTM-консалтинговая фирма. Связывает глобальные стартапы с корейскими телекомами и госпрограммами инноваций.",
+    facts:{"Профиль":"Глубокий опыт в мобильной рекламе / CPA","Карьера":"CIGNA, LINE (BD), Mobusi (кантри-менеджер Корея → APAC-директор)","Основал":"SpainAgain; DIOKOS (mobile/digital-реклама)","Связи":"La French Tech Seoul, COMEUP; был на VivaTech 2024","Образование":"IE Business School (Испания)"},
+    loc:"Сеул / Инчхон, Корея", langs:["KR","EN","ES"], flag:null },
+
+  { day:"thu", time:"15:30", status:"ok",
+    first:"Elsane", last:"Guglielmino", initials:"EG", color:"#b8862a",
+    role:"CEO / President", org:"Quotium Technologies", type:"service",
+    orgDesc:"VAT FR43322548355 = Quotium Technologies (SIREN 322548355), издатель прикладного ПО, капитал ~€2.64M, форма SAS. Исторически — application-security / софт. Группа ~5 структур (ultimate — Holditech).",
+    facts:{"Роль":"President (с окт. 2015; была и directeur général)","Профиль":"Издатель ПО, не венчурный фонд","Связи":"Семейное владение Tiberini; связь с Arcascience","Локация":"Courbevoie (Париж)"},
+    loc:"Курбевуа, Франция", langs:["FR","EN","IT"], flag:"Публичного следа по персоне почти нет (только реестры); уточнить актуальную роль / венчур лично." },
+
+  { day:"thu", time:"16:00", status:"ok",
+    first:"Vincent", last:"Mahloko", initials:"VM", color:"#0b8a4f",
+    role:"Managing Partner", org:"Luminaries Founder Residence", type:"partner",
+    orgDesc:"Парижская резиденция для фаундеров (3–6 мес), «строящих компании для Африки» + Africa-Europe expansion studio. Похоже на модель резиденции / комьюнити / студии.",
+    facts:{"Профиль":"Выход в Африку, фаундерское комьюнити в Париже","Доп. проекты":"Фаундер Luminae (proptech); со-фаундер SugaryMe (диабет/EHR); ранее Pelico","Образование":"HEC Paris MBA; Stellenbosch (Investment & Financial Mgmt)"},
+    loc:"Париж, Франция (ЮАР)", langs:["EN","FR"], table:{zone:"Business Plaza",num:"5"}, flag:"Не подтверждено, что деплоит капитал — уточнить формат лично." },
+
+  { day:"thu", time:"16:30", status:"wait",
+    first:"Alp Eren", last:"Göktürk", initials:"AG", color:"#0b8a4f",
+    role:"Entrepreneurship Projects Manager", org:"Eczacıbaşı Holding", type:"partner",
+    orgDesc:"Крупный турецкий конгломерат (стройматериалы, потребтовары, здравоохранение). Ведёт интрапренёрскую программу и координирует инновационные проекты группы.",
+    facts:{"Профиль":"Корп. инновации, пилоты, член жюри стартап-конкурсов","Карьера":"~11 лет в Koç Group (Arçelik); 2017–2021 Inventram (CVC/IP-рука Koç)","С Eczacıbaşı":"с 2021","Образование":"İstanbul Bilgi; UC Irvine; Marmara (Financial Markets)"},
+    loc:"Стамбул, Турция", langs:["TR","EN"], flag:null },
+
+  { day:"thu", time:"17:30", status:"wait",
+    first:"Zeynep", last:"Şener", initials:"ZŞ", color:"#0454ff",
+    role:"Associate", org:"Simya VC", type:"investor",
+    orgDesc:"Турецкий международный акселерационный фонд для early-stage стартапов с глобальным потенциалом, упор на B2B. Эксклюзивное партнёрство с Alchemist Accelerator; связан с экосистемой 212. Фонд I — $7M, Фонд II — $10M.",
+    facts:{"Фокус":"Sector-agnostic, упор на B2B SaaS / AI","Стадия":"Early-stage; помощь в глобальном масштабировании","Портфель":"Evercopy, Juphy, Syntonym, B2metric, Agrotics, Werover","Бэкграунд":"Ранее Expertera, Interconnection (Вена), Xperts Council; Sabancı University","Партнёр":"Alchemist Accelerator (вывод на глобальный рынок)"},
+    loc:"Стамбул, Турция", langs:["TR","EN"], flag:null },
+
+  { day:"fri", time:"10:00", status:"wait",
+    first:"Sara", last:"Lerota", initials:"SL", color:"#0b8a4f",
+    role:"Founder & CEO", org:"Satori Catalyst", type:"partner",
+    orgDesc:"Early-stage growth / GTM / позиционирование-консалтинг (UVP / ICP), много работы с Web3-фаундерами. Балканский экосистемный билдер.",
+    facts:{"Профиль":"Позиционирование, партнёрства, Web3, Зап. Балканы","Карьера":"VP партнёрств Ministry of Programming (Сараево); первый частный акселератор БиГ; MarketMakers","Менторство":"Hackquarters, cLab Ventures; Startup Ole; SEE UP Accelerator (Сербия)","Трек":"Коучила 40–70+ стартапов"},
+    loc:"Босния и Герцеговина", langs:["EN","BS"], table:{zone:"Business Plaza",num:"14"}, flag:"Юрформа Satori Catalyst не подтверждена; сайт satoricatalyst.io не подтверждён как её." },
+
+  { day:"fri", time:"10:30", status:"ok",
+    first:"Nikita", last:"Krivelevich", initials:"NK", color:"#0454ff",
+    role:"Investment Director", org:"Zubr Capital", type:"investor",
+    orgDesc:"PE / growth-фонд (изначально беларуский, теперь Лимасол + Варшава), фокус — tech в ЦВЕ. ~$250M под управлением, 20–30 портфельных, два единорога. Якорные LP: EBRD, FMO, Wargaming. Фонд II — $96M (2022).",
+    facts:{"Тикет":"$5–12M","Стадия":"Series A/B; компании от $4–5M годовой выручки","Фокус":"B2B SaaS, mobile apps, AI, гейминг; целит ~5x","Последняя сделка":"Soloband Games (гейминг, Series A, апр. 2026)","Бэкграунд":"Belarusian State Economic University; ранее EffectiveSoft"},
+    loc:"Варшава, Польша", langs:["RU","EN","PL"], table:{zone:"Business Plaza",num:"16"}, flag:null },
+
+  { day:"fri", time:"14:30", status:"wait",
+    first:"Guillaume", last:"Echaudemaison", initials:"GE", color:"#0454ff",
+    role:"VC Principal", org:"Seventure Partners", type:"investor",
+    orgDesc:"Крупный европейский VC (с 1997, при Natixis), офисы в Париже, Мюнхене, Лондоне, Женеве, Базеле. 50+ выходов за 10+ лет, 15 IPO. Tech/Digital-команда инвестирует в SaaS, финтех, retailtech, cyber.",
+    facts:{"Тикет":"€1–5M (средний)","Стадия":"Seed, Series A, Series B","Фокус (его)":"B2B SaaS, финтех, retailtech; сильно в финтехе","Портфель Tech":"Algoan, Opencell, Siit, hepster (embedded insurance)","Бэкграунд":"С 2018 (Analyst → Senior Associate → Principal); ECE Paris + emlyon (Corporate Finance)"},
+    loc:"Париж, Франция", langs:["FR","EN"], flag:null },
+
+  { day:"fri", time:"15:30", status:"wait",
+    first:"Veronika", last:"Argust", initials:"VA", color:"#0454ff",
+    role:"Principal", org:"Look AI Ventures (LAIV)", type:"investor",
+    orgDesc:"Первый чешский VC-фонд (запуск Q4 2022), инвестирует исключительно в early-stage AI-стартапы по миру (структура SICAV через AVANT). В 2024 — 6000+ оценённых AI-стартапов, ~16 в портфеле. Связь с AI Startup Incubator.",
+    facts:{"Тикет":"до ~€250K + follow-on до ~€1M","Стадия":"pre-seed / seed","Фокус":"Исключительно AI-стартапы","Гео":"EU-фокус, глобальный мандат"},
+    loc:"Прага, Чехия", langs:["EN","CS"], flag:null }
+];
+
+const DAYS = [
+  { key:"wed", num:"День 01", name:"Среда", date:"17 июня" },
+  { key:"thu", num:"День 02", name:"Четверг", date:"18 июня" },
+  { key:"fri", num:"День 03", name:"Пятница", date:"19 июня" }
+];
+
+const daysEl = document.getElementById('days');
+const q = document.getElementById('q');
+const shown = document.getElementById('shown');
+const filters = document.getElementById('filters');
+let activeFilter = 'all';
+
+const pinSvg='<svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11Z"/><circle cx="12" cy="10" r="2.4"/></svg>';
+const warnSvg='<svg viewBox="0 0 24 24"><path d="M12 3 2 20h20L12 3Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.4" r=".6" fill="currentColor" stroke="none"/></svg>';
+const clockSvg='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+
+function card(p){
+  const facts=Object.entries(p.facts).map(([k,v])=>`<div class="fact"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+  const langs=p.langs.map(l=>`<span class="lang">${l}</span>`).join('');
+  const flag=p.flag?`<div class="flag-note">${warnSvg}<span>${p.flag}</span></div>`:'';
+  const st=p.status==='ok'
+    ?'<span class="status ok"><span class="sd"></span>подтверждено</span>'
+    :'<span class="status wait"><span class="sd"></span>ожидает</span>';
+  const meet=p.table?`<div class="meet-bar">${pinSvg}<span class="zone">${p.table.zone}</span>${p.table.num?`<b>Стол ${p.table.num}</b>`:''}</div>`:'';
+  const tableTxt=p.table?(p.table.zone+' '+(p.table.num?'стол '+p.table.num:'')):'';
+  const blob=[p.first,p.last,p.org,p.role,p.orgDesc,p.loc,tableTxt,Object.values(p.facts).join(' ')].join(' ').toLowerCase();
+  const tagTxt=p.type==='investor'?'инвестор':p.type==='partner'?'партнёр':'сервис';
+  return `<article class="card" data-type="${p.type}" data-blob="${blob.replace(/"/g,'')}">
+    <div class="time-bar"><span class="time">${clockSvg}${p.time}</span>${st}</div>
+    ${meet}
+    <div class="card-top">
+      <div class="avatar" style="background:${p.color}">${p.initials}</div>
+      <div class="nm"><h3>${p.first} ${p.last}</h3><div class="role">${p.role}</div></div>
+    </div>
+    <div class="card-body">
+      <div class="org-row"><span class="org-name">${p.org}</span><span class="tag ${p.type}">${tagTxt}</span></div>
+      <div class="org-desc">${p.orgDesc}</div>
+      <dl class="facts">${facts}</dl>${flag}
+    </div>
+    <div class="card-foot"><span class="loc">${pinSvg}${p.loc}</span><span class="langs">${langs}</span></div>
+  </article>`;
+}
+
+daysEl.innerHTML = DAYS.map(d=>{
+  const ppl = PEOPLE.filter(p=>p.day===d.key);
+  return `<section class="day" data-day="${d.key}">
+    <div class="day-head">
+      <span class="day-num">${d.num}</span>
+      <span class="day-name">${d.name}</span>
+      <span class="day-date">${d.date}</span>
+      <span class="day-cnt">${ppl.length} встреч</span>
+    </div>
+    <div class="grid">${ppl.map(card).join('')}</div>
+  </section>`;
+}).join('');
+
+function apply(){
+  const term=q.value.trim().toLowerCase();
+  let n=0;
+  document.querySelectorAll('.day').forEach(day=>{
+    let dayN=0;
+    day.querySelectorAll('.card').forEach(c=>{
+      const okType=activeFilter==='all'||c.dataset.type===activeFilter;
+      const okTerm=!term||c.dataset.blob.includes(term);
+      const show=okType&&okTerm;
+      c.classList.toggle('hide',!show);
+      if(show){n++;dayN++;}
+    });
+    day.classList.toggle('hide',dayN===0);
+    const cnt=day.querySelector('.day-cnt');
+    if(cnt) cnt.textContent=dayN+' встреч';
+  });
+  shown.textContent=n;
+}
+
+q.addEventListener('input',apply);
+filters.addEventListener('click',e=>{
+  const btn=e.target.closest('.chip');if(!btn)return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');activeFilter=btn.dataset.f;apply();
+});
+</script>
+</body>
+</html>
