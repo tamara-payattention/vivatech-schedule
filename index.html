@@ -237,13 +237,6 @@ const PEOPLE = [
     facts:{"Тикет":"€1–5M (начальный)","Порог":"Компании от €50k выручки в месяц","Стадия":"Series A/B и growth","Портфель":"We Are Eves, Join Marketing, Wonderkind, Rinkel, passbolt, Apideck, delphai (exit→Intapp)","Бэкграунд":"С 2022; ранее PE (Maeander, Nedvest); TU Delft"},
     loc:"Амстердам, Нидерланды", langs:["NL","EN"], flag:null },
 
-  { day:"thu", time:"13:00", status:"ok",
-    first:"Vasyl", last:"Kuchma", initials:"VK", color:"#b8862a",
-    role:"CEO & Co-Founder", org:"SDH IT GmbH", type:"service",
-    orgDesc:"IT-аутсорс / разработка (Software Development Hub, с 2014). Команды в Украине, Германии, США/Канаде. Full-cycle разработка, инжиниринг, DevOps, ML/AI. Сильный трек в healthtech / EHR.",
-    facts:{"Профиль":"Dev shop — партнёр по разработке / масштабированию","Опыт":"20+ лет; серийный фаундер; Kharkiv State Economics University","Спикер":"GovTech / digital-health (Smart Country Convention Berlin)"},
-    loc:"Гамбург, Германия (Украина)", langs:["UK","RU","EN","DE"], table:{zone:"Business Plaza",num:"37"}, flag:null },
-
   { day:"thu", time:"13:30", status:"wait",
     first:"Aaron", last:"Maini", initials:"AM", color:"#b8862a",
     role:"Senior Business Development Manager", org:"PitchBook (Morningstar)", type:"service",
@@ -259,6 +252,13 @@ const PEOPLE = [
     loc:"Сеул / Инчхон, Корея", langs:["KR","EN","ES"], flag:null },
 
   { day:"thu", time:"15:30", status:"ok",
+    first:"Vasyl", last:"Kuchma", initials:"VK", color:"#b8862a",
+    role:"CEO & Co-Founder", org:"SDH IT GmbH", type:"service",
+    orgDesc:"IT-аутсорс / разработка (Software Development Hub, с 2014). Команды в Украине, Германии, США/Канаде. Full-cycle разработка, инжиниринг, DevOps, ML/AI. Сильный трек в healthtech / EHR.",
+    facts:{"Профиль":"Dev shop — партнёр по разработке / масштабированию","Опыт":"20+ лет; серийный фаундер; Kharkiv State Economics University","Спикер":"GovTech / digital-health (Smart Country Convention Berlin)"},
+    loc:"Гамбург, Германия (Украина)", langs:["UK","RU","EN","DE"], table:{zone:"Business Plaza",num:"37"}, flag:null },
+
+  { day:"thu", time:"", status:"ok",
     first:"Elsane", last:"Guglielmino", initials:"EG", color:"#b8862a",
     role:"CEO / President", org:"Quotium Technologies", type:"service",
     orgDesc:"VAT FR43322548355 = Quotium Technologies (SIREN 322548355), издатель прикладного ПО, капитал ~€2.64M, форма SAS. Исторически — application-security / софт. Группа ~5 структур (ultimate — Holditech).",
@@ -339,11 +339,12 @@ function card(p){
     ?'<span class="status ok"><span class="sd"></span>подтверждено</span>'
     :'<span class="status wait"><span class="sd"></span>ожидает</span>';
   const meet=p.table?`<div class="meet-bar">${pinSvg}<span class="zone">${p.table.zone}</span>${p.table.num?`<b>Стол ${p.table.num}</b>`:''}</div>`:'';
+  const timeHtml=p.time?`<span class="time">${clockSvg}${p.time}</span>`:`<span class="time"></span>`;
   const tableTxt=p.table?(p.table.zone+' '+(p.table.num?'стол '+p.table.num:'')):'';
   const blob=[p.first,p.last,p.org,p.role,p.orgDesc,p.loc,tableTxt,Object.values(p.facts).join(' ')].join(' ').toLowerCase();
   const tagTxt=p.type==='investor'?'инвестор':p.type==='partner'?'партнёр':'сервис';
   return `<article class="card" data-type="${p.type}" data-blob="${blob.replace(/"/g,'')}">
-    <div class="time-bar"><span class="time">${clockSvg}${p.time}</span>${st}</div>
+    <div class="time-bar">${timeHtml}${st}</div>
     ${meet}
     <div class="card-top">
       <div class="avatar" style="background:${p.color}">${p.initials}</div>
