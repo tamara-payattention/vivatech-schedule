@@ -152,7 +152,6 @@
     <div>
       <div class="eyebrow">Программа встреч · 18 контактов</div>
       <h1>График<br>встреч <em>·</em></h1>
-      <p class="lede">Все запланированные встречи на VivaTech по дням и времени. Каждая карточка — человек, фирма, инвестиционный/деловой фокус, бэкграунд, локация, языки и статус встречи. <b>Без оценок и ранжирования</b> — только фактура.</p>
     </div>
     <div class="hero-stats">
       <div class="hstat b"><div class="n">18</div><div class="l">встреч<br>всего</div></div>
@@ -180,18 +179,6 @@
   <div class="count-line">Показано <b id="shown">18</b> из 18</div>
   <div id="days"></div>
 </main>
-
-<footer>
-  <div class="leg">
-    <span><i style="background:#0454ff"></i> Инвестор / фонд</span>
-    <span><i style="background:#0b8a4f"></i> Партнёр / коннектор</span>
-    <span><i style="background:#b8862a"></i> Сервис / прочее</span>
-    <span style="color:#0b8a4f"><i style="background:#43e08a"></i> Встреча подтверждена</span>
-    <span style="color:#b8862a"><i style="background:#ffbf48"></i> Запрос ожидает ответа</span>
-    <span style="color:#ff4d2e"><i style="background:#ff4d2e"></i> Уточнить лично</span>
-  </div>
-  <p>Данные из открытых источников (LinkedIn, сайты компаний, реестры, Crunchbase, отраслевые базы) для подготовки к встречам. Часть персональных профилей в открытом доступе разрежена — отмечены флагом «уточнить лично». Должности — по списку встреч и публичным профилям. Цифры по фондам/AUM могут устаревать — проверять перед предметным разговором. Статус встреч — по данным приложения VivaTech на момент подготовки.</p>
-</footer>
 
 <script>
 const PEOPLE = [
@@ -333,7 +320,6 @@ const clockSvg='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d=
 
 function card(p){
   const facts=Object.entries(p.facts).map(([k,v])=>`<div class="fact"><dt>${k}</dt><dd>${v}</dd></div>`).join('');
-  const langs=p.langs.map(l=>`<span class="lang">${l}</span>`).join('');
   const flag=p.flag?`<div class="flag-note">${warnSvg}<span>${p.flag}</span></div>`:'';
   const st=p.status==='ok'
     ?'<span class="status ok"><span class="sd"></span>подтверждено</span>'
@@ -355,7 +341,6 @@ function card(p){
       <div class="org-desc">${p.orgDesc}</div>
       <dl class="facts">${facts}</dl>${flag}
     </div>
-    <div class="card-foot"><span class="loc">${pinSvg}${p.loc}</span><span class="langs">${langs}</span></div>
   </article>`;
 }
 
