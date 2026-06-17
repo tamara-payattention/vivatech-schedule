@@ -150,14 +150,8 @@
 <section class="hero">
   <div class="hero-grid">
     <div>
-      <div class="eyebrow">Программа встреч · 18 контактов</div>
+      <div class="eyebrow">Программа встреч</div>
       <h1>График<br>встреч <em>·</em></h1>
-    </div>
-    <div class="hero-stats">
-      <div class="hstat b"><div class="n">18</div><div class="l">встреч<br>всего</div></div>
-      <div class="hstat g"><div class="n">7</div><div class="l">подтверждено</div></div>
-      <div class="hstat"><div class="n">11</div><div class="l">ожидают<br>ответа</div></div>
-      <div class="hstat"><div class="n">3</div><div class="l">дня</div></div>
     </div>
   </div>
 </section>
@@ -168,15 +162,14 @@
     <input id="q" type="text" placeholder="Поиск по имени, фирме, стране, фокусу…" autocomplete="off">
   </div>
   <div class="filters" id="filters">
-    <button class="chip on" data-f="all">Все <span class="cnt">18</span></button>
-    <button class="chip" data-f="investor">Инвесторы <span class="cnt">10</span></button>
-    <button class="chip" data-f="partner">Партнёры <span class="cnt">5</span></button>
-    <button class="chip" data-f="service">Сервис <span class="cnt">3</span></button>
+    <button class="chip on" data-f="all">Все</button>
+    <button class="chip" data-f="investor">Инвесторы</button>
+    <button class="chip" data-f="partner">Партнёры</button>
+    <button class="chip" data-f="service">Сервис</button>
   </div>
 </div>
 
 <main class="wrap">
-  <div class="count-line">Показано <b id="shown">18</b> из 18</div>
   <div id="days"></div>
 </main>
 
@@ -317,7 +310,6 @@ const DAYS = [
 
 const daysEl = document.getElementById('days');
 const q = document.getElementById('q');
-const shown = document.getElementById('shown');
 const filters = document.getElementById('filters');
 let activeFilter = 'all';
 
@@ -358,7 +350,6 @@ daysEl.innerHTML = DAYS.map(d=>{
       <span class="day-num">${d.num}</span>
       <span class="day-name">${d.name}</span>
       <span class="day-date">${d.date}</span>
-      <span class="day-cnt">${ppl.length} встреч</span>
     </div>
     <div class="grid">${ppl.map(card).join('')}</div>
   </section>`;
@@ -377,10 +368,7 @@ function apply(){
       if(show){n++;dayN++;}
     });
     day.classList.toggle('hide',dayN===0);
-    const cnt=day.querySelector('.day-cnt');
-    if(cnt) cnt.textContent=dayN+' встреч';
   });
-  shown.textContent=n;
 }
 
 q.addEventListener('input',apply);
